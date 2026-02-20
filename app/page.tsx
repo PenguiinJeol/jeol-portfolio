@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import Typewriter, { TypewriterClass } from "typewriter-effect";
+import Typewriter from "typewriter-effect";
 import Navbar from "./components/navbar";
 import Gallery from "./components/gallery";
 
@@ -28,7 +28,7 @@ export default function Home() {
                 <span>This is J</span>
                 <span className="text-[var(--cream)]">
                   <Typewriter
-                    onInit={(typewriter: TypewriterClass) => {
+                    onInit={(typewriter: any) => {
                       typewriter
                         .typeString("oel.")
                         .pauseFor(1250).deleteAll(45)
