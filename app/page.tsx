@@ -21,7 +21,7 @@ export default function Home() {
         <div className="grid grid-cols-1 lg:grid-cols-2 w-full h-full gap-6 lg:gap-4">
           
           {/* LEFT SIDE: BIO CONTENT */}
-          <div className="relative flex flex-col justify-center order-1 pl-0 lg:pl-12 pt-[20vh] lg:pt-0 pb-4 lg:pb-[100px]">
+          <div className="relative flex flex-col justify-center order-1 pl-0 lg:pl-12 pt-[20gitvh] lg:pt-0 pb-4 lg:pb-[100px]">
             {/* CHANGED: pb-4 above (reduced from pb-12) to tighten the bottom of the bio */}
             <div className="z-20 text-center lg:text-left">
               <h1 className="font-[family-name:var(--font-league-gothic)] text-5xl lg:text-6xl font-bold tracking-[0.05em] text-[var(--cream)] flex items-baseline justify-center lg:justify-start">
