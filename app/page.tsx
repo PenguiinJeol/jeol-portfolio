@@ -57,7 +57,7 @@ export default function Home() {
           </div>
 
           {/* RIGHT SIDE: THE GALLERY */}
-          <div className="w-full flex flex-col order-2 pr-0 lg:pr-[100px] pt-0 lg:pt-[100px] pb-6 lg:pb-[100px] h-[380px] lg:h-full overflow-hidden justify-start">
+          <div className="w-full flex flex-col order-2 pr-0 lg:pr-[100px] pt-0 lg:pt-[100px] pb-6 lg:pb-20 h-[380px] lg:h-full overflow-visible justify-between">
             {/* CHANGED: pt-0 on mobile (was pt-6) to remove extra space at the top of gallery container */}
             <Gallery />
           </div>

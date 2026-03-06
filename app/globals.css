@@ -1,19 +1,26 @@
+
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap');
 @import "tailwindcss";
+
+
+
+:root {
+  --main-dark: #101118;
+  --cream: #efeee7;
+  --grid-grey: #3c4043;
+  --alt-dark: #212223;
+  --light-grid: #CCCCCC;
+  --highlighter-pink: #f497ba;
+  --highlighter-blue: #00ffd5;
+  --grid-columns: 20;
+  --font-ibm-plex: 'IBM Plex Sans', sans-serif;
+}
 
 @layer base {
   html {
     font-family: var(--font-league-gothic), sans-serif;
     letter-spacing: 0.05em;
   }
-}
-
-:root {
-  --main-dark: #101118;
-  --cream: #efeee7;
-  --grid-grey: #3c4043;
-  --highlighter-pink: #f497ba;
-  --highlighter-blue: #00ffd5;
-  --grid-columns: 20;
 }
 
 @media (min-width: 768px) { :root { --grid-columns: 30; } }
@@ -52,3 +59,7 @@ body {
 @keyframes ticker-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+.font-ibm {
+  font-family: var(--font-ibm-plex);
+}

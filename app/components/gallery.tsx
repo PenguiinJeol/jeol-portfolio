@@ -1,151 +1,162 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
+import Link from "next/link";
+import { workData } from "../lib/work";
+import WorkHero from "./media-handler"; // Utilizing your smart hero component
 
-const images = [
-  { id: 1, color: "bg-[#00ffd5]" },
-  { id: 2, color: "bg-[#f497ba]" },
-  { id: 3, color: "bg-blue-600" },
-];
+// Automatically generate gallery items from your central data file
+const images = Object.entries(workData).map(([slug, data]) => ({
+  slug,
+  src: data.heroImage,
+  title: data.title,
+  desc: data.description,
+  id: slug,
+}));
 
-const infiniteItems = [
-  images[images.length - 1],
-  ...images,
-  images[0],
-];
+const infiniteItems = [images[images.length - 1], ...images, images[0]];
 
 export default function Gallery() {
   const [activeDot, setActiveDot] = useState(0);
+  const [mousePos, setMousePos] = useState({ x: -100, y: -100 });
+  const [isHovering, setIsHovering] = useState(false);
+  const [hasMoved, setHasMoved] = useState(false);
+  
   const currentIndexRef = useRef(1);
-  const [currentIndex, setCurrentIndex] = useState(1); 
-  
   const scrollRef = useRef<HTMLDivElement>(null);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
-  const isHovered = useRef(false);
   const lastInteractionTime = useRef(Date.now());
-  
   const THROTTLE_MS = 400;
 
-  const updateIndex = (val: number) => {
-    currentIndexRef.current = val;
-    setCurrentIndex(val);
-  };
-
-  const resetTimer = () => {
-    if (timerRef.current) clearInterval(timerRef.current);
-    timerRef.current = setInterval(() => {
-      const now = Date.now();
-      const timeSinceInteraction = now - lastInteractionTime.current;
-      if (!isHovered.current && timeSinceInteraction >= 10000) {
-        handleNext(true);
-      }
-    }, 10000);
-  };
-
   useEffect(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-    el.scrollLeft = el.offsetWidth;
-
-    const handleWheel = (e: WheelEvent) => {
-      if (Math.abs(e.deltaY) > 0) e.preventDefault();
-      const now = Date.now();
-      if (now - lastInteractionTime.current < THROTTLE_MS) return;
-      lastInteractionTime.current = now; 
-      if (e.deltaY > 0) handleNext(false);
-      else if (e.deltaY < 0) handlePrev();
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePos({ x: e.clientX, y: e.clientY });
+      if (!hasMoved) setHasMoved(true);
     };
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, [hasMoved]);
 
-    const handleMouseEnter = () => { isHovered.current = true; };
-    const handleMouseLeave = () => { 
-      isHovered.current = false;
-      lastInteractionTime.current = Date.now();
-    };
-
-    el.addEventListener("wheel", handleWheel, { passive: false });
-    el.addEventListener("mouseenter", handleMouseEnter);
-    el.addEventListener("mouseleave", handleMouseLeave);
-    resetTimer();
-
-    return () => {
-      el.removeEventListener("wheel", handleWheel);
-      el.removeEventListener("mouseenter", handleMouseEnter);
-      el.removeEventListener("mouseleave", handleMouseLeave);
-      if (timerRef.current) clearInterval(timerRef.current);
-    };
-  }, []);
+  const moveToIndex = (index: number) => {
+    if (!scrollRef.current) return;
+    lastInteractionTime.current = Date.now();
+    const width = scrollRef.current.offsetWidth;
+    scrollRef.current.scrollTo({ left: width * index, behavior: "smooth" });
+    currentIndexRef.current = index;
+  };
 
   const handleScroll = () => {
     if (!scrollRef.current) return;
     const el = scrollRef.current;
     const width = el.offsetWidth;
     const scrollPos = el.scrollLeft;
-    
     const rawIndex = Math.round(scrollPos / width);
-    const dotIndex = ((rawIndex - 1) % images.length + images.length) % images.length;
+    const dotIndex = (((rawIndex - 1) % images.length) + images.length) % images.length;
     setActiveDot(dotIndex);
 
     clearTimeout((window as any).scrollTimeout);
     (window as any).scrollTimeout = setTimeout(() => {
-      if (rawIndex === 0) {
-        el.scrollTo({ left: width * images.length });
-        updateIndex(images.length);
-      } else if (rawIndex === infiniteItems.length - 1) {
-        el.scrollTo({ left: width });
-        updateIndex(1);
-      } else {
-        updateIndex(rawIndex);
-      }
+      if (rawIndex === 0) el.scrollLeft = width * images.length;
+      else if (rawIndex === infiniteItems.length - 1) el.scrollLeft = width;
+      currentIndexRef.current = Math.round(el.scrollLeft / width);
     }, 150);
   };
 
-  const moveToIndex = (index: number, isAuto = false) => {
-    if (!scrollRef.current) return;
-    if (!isAuto) lastInteractionTime.current = Date.now();
-
-    const width = scrollRef.current.offsetWidth;
-    updateIndex(index);
-    scrollRef.current.scrollTo({
-      left: width * index,
-      behavior: "smooth",
-    });
-  };
-
-  const handleNext = (isAuto = true) => moveToIndex(currentIndexRef.current + 1, isAuto);
-  const handlePrev = () => moveToIndex(currentIndexRef.current - 1, false);
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    el.scrollLeft = el.offsetWidth;
+    const handleWheel = (e: WheelEvent) => {
+      if (Math.abs(e.deltaY) > 0) e.preventDefault();
+      const now = Date.now();
+      if (now - lastInteractionTime.current < THROTTLE_MS) return;
+      if (e.deltaY > 0) moveToIndex(currentIndexRef.current + 1);
+      else if (e.deltaY < 0) moveToIndex(currentIndexRef.current - 1);
+    };
+    el.addEventListener("wheel", handleWheel, { passive: false });
+    return () => el.removeEventListener("wheel", handleWheel);
+  }, []);
 
   return (
-    <div className="w-full h-full flex flex-col">
+    <div className="w-full h-full flex flex-col font-ibm overflow-visible">
+      
+      {/* CUSTOM CURSOR */}
       <div 
-        ref={scrollRef}
-        onScroll={handleScroll}
-        className="flex-grow w-full overflow-x-auto overflow-y-hidden snap-x snap-mandatory no-scrollbar flex bg-black/10 cursor-crosshair"
-      >
-        {infiniteItems.map((item, i) => (
-          <div key={`${item.id}-${i}`} className="min-w-full h-full snap-center">
-            <div className={`w-full h-full ${item.color}`} />
+        className="fixed top-0 left-0 w-10 h-10 border-[1.5px] border-[var(--cream)] rounded-full pointer-events-none z-[9999] flex items-center justify-center transition-[opacity,transform] duration-[200ms] ease-out"
+        style={{ 
+          left: `${mousePos.x}px`,
+          top: `${mousePos.y}px`,
+          transform: `translate(-50%, -50%) scale(${isHovering ? 1 : 0})`,
+          opacity: isHovering && hasMoved ? 1 : 0
+        }}
+      />
+
+      <div className="relative flex-grow overflow-visible">
+        <Link 
+          href={`/work/${images[activeDot].slug}`}
+          onMouseEnter={() => setIsHovering(true)}
+          onMouseLeave={() => setIsHovering(false)}
+          className="contents cursor-none"
+        >
+          {/* MAIN IMAGE BOX*/}
+          <div className="relative w-full h-full border-[1.5px] border-[var(--light-grid)] rounded-none overflow-hidden z-10">
+            <div 
+              ref={scrollRef} 
+              onScroll={handleScroll} 
+              className="w-full h-full overflow-x-auto overflow-y-hidden snap-x snap-mandatory no-scrollbar flex"
+            >
+              {infiniteItems.map((item, i) => (
+                <div key={`${item.id}-${i}`} className="min-w-full h-full snap-center relative">
+                  {/* DYNAMIC COMPONENT: Handles Kirby logic internally */}
+                  <WorkHero 
+                    src={item.src} 
+                    alt={item.title}
+                    className="object-cover"
+                    priority={i === 1}
+                  />
+                </div>
+              ))}
+            </div>
+            
+            {/* VIGNETTE OVERLAY */}
+            <div 
+              className="absolute inset-0 pointer-events-none z-20" 
+              style={{ background: "linear-gradient(to bottom, transparent 0%, var(--main-dark) 95%)" }} 
+            />
           </div>
-        ))}
+
+          {/* BLUEPRINT TITLE BLOCK */}
+          <div className="absolute bottom-6 -left-6 bg-[var(--main-dark)] border border-[var(--light-grid)] z-30 min-w-[300px] flex flex-col shadow-2xl">
+            <div className="flex items-center gap-3 px-6 pt-4 pb-5">
+              <h3 className="text-[20px] font-medium text-[var(--cream)] leading-none underline decoration-[1.5px] underline-offset-[4px] decoration-[var(--light-grid)]">
+                {images[activeDot].title}
+              </h3>
+              <span className="text-[18px] font-medium text-[var(--cream)] transform translate-y-[1px]">↘</span>
+            </div>
+            <div className="w-full border-b border-[var(--light-grid)]" />
+            <div className="px-6 pt-5 pb-5">
+              <p className="text-[18px] font-normal text-[var(--cream)] opacity-100 leading-snug">
+                {images[activeDot].desc}
+              </p>
+            </div>
+          </div>
+        </Link>
       </div>
 
-      <div className="w-full mt-6 flex items-center min-h-[40px]">
+      {/* NAVIGATION CONTROLS */}
+      <div className="w-full mt-9 flex items-center min-h-[40px] z-40">
         <div className="flex-1 flex justify-center">
-          <button onClick={() => handlePrev()} className="text-[var(--cream)] text-2xl hover:text-[var(--highlighter-pink)] cursor-pointer">←</button>
+          <button onClick={() => moveToIndex(currentIndexRef.current - 1)} className="text-[var(--cream)] text-2xl cursor-pointer">←</button>
         </div>
-
         <div className="flex-none flex gap-4">
           {images.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => moveToIndex(i + 1, false)}
-              className={`w-1.5 h-1.5 rounded-full transition-all duration-300 focus:outline-none ${
-                activeDot === i ? "bg-[var(--highlighter-pink)] scale-150" : "bg-[var(--grid-grey)] hover:bg-[var(--cream)]"
-              }`}
+            <button 
+              key={i} 
+              onClick={() => moveToIndex(i + 1)} 
+              className={`w-1.5 h-1.5 rounded-full transition-all duration-300 cursor-pointer ${activeDot === i ? "bg-[var(--highlighter-pink)] scale-125" : "bg-[var(--grid-grey)]"}`} 
             />
           ))}
         </div>
-
         <div className="flex-1 flex justify-center">
-          <button onClick={() => handleNext(false)} className="text-[var(--cream)] text-2xl hover:text-[var(--highlighter-pink)] cursor-pointer">→</button>
+          <button onClick={() => moveToIndex(currentIndexRef.current + 1)} className="text-[var(--cream)] text-2xl cursor-pointer">→</button>
         </div>
       </div>
     </div>
