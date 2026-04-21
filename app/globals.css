@@ -20,6 +20,13 @@
   html {
     font-family: var(--font-league-gothic), sans-serif;
     letter-spacing: 0.05em;
+    overflow-y: overlay; /* Note: This is deprecated in some browsers but still widely supported */
+  }
+}
+
+@supports (scrollbar-gutter: stable) {
+  html {
+    scrollbar-gutter: stable both-edges;
   }
 }
 
@@ -63,3 +70,29 @@ body {
 .font-ibm {
   font-family: var(--font-ibm-plex);
 }
+
+::-webkit-scrollbar {
+  width: 10px; /* Slightly wider to make the border visible */
+}
+
+::-webkit-scrollbar-track {
+  background: var(--deep-black);
+  /* This creates a vertical 'grid line' that stays fixed as you scroll */
+  border-left: 1px solid var(--grid-grey);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--grid-grey);
+  /* Rounded as requested */
+  border-radius: 10px;
+  /* Adds a little 'inset' so the thumb doesn't touch the edges */
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--light-grid);
+  background-clip: content-box;
+}
+
+/* CAA 12APR26 / 1008H. */

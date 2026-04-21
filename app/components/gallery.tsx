@@ -2,14 +2,13 @@
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { workData } from "../lib/work";
-import WorkHero from "./media-handler"; // Utilizing your smart hero component
+import WorkHero from "./work-content/media-handler";
 
-// Automatically generate gallery items from your central data file
 const images = Object.entries(workData).map(([slug, data]) => ({
   slug,
   src: data.heroImage,
   title: data.title,
-  desc: data.description,
+  desc: data.summary,
   id: slug,
 }));
 
@@ -76,7 +75,7 @@ export default function Gallery() {
   }, []);
 
   return (
-    <div className="w-full h-full flex flex-col font-ibm overflow-visible">
+    <div className="w-full h-full flex flex-col font-ibm overflow-visible -mt-12 md:-mt-16">
       
       {/* CUSTOM CURSOR */}
       <div 
@@ -89,60 +88,8 @@ export default function Gallery() {
         }}
       />
 
-      <div className="relative flex-grow overflow-visible">
-        <Link 
-          href={`/work/${images[activeDot].slug}`}
-          onMouseEnter={() => setIsHovering(true)}
-          onMouseLeave={() => setIsHovering(false)}
-          className="contents cursor-none"
-        >
-          {/* MAIN IMAGE BOX*/}
-          <div className="relative w-full h-full border-[1.5px] border-[var(--light-grid)] rounded-none overflow-hidden z-10">
-            <div 
-              ref={scrollRef} 
-              onScroll={handleScroll} 
-              className="w-full h-full overflow-x-auto overflow-y-hidden snap-x snap-mandatory no-scrollbar flex"
-            >
-              {infiniteItems.map((item, i) => (
-                <div key={`${item.id}-${i}`} className="min-w-full h-full snap-center relative">
-                  {/* DYNAMIC COMPONENT: Handles Kirby logic internally */}
-                  <WorkHero 
-                    src={item.src} 
-                    alt={item.title}
-                    className="object-cover"
-                    priority={i === 1}
-                  />
-                </div>
-              ))}
-            </div>
-            
-            {/* VIGNETTE OVERLAY */}
-            <div 
-              className="absolute inset-0 pointer-events-none z-20" 
-              style={{ background: "linear-gradient(to bottom, transparent 0%, var(--main-dark) 95%)" }} 
-            />
-          </div>
-
-          {/* BLUEPRINT TITLE BLOCK */}
-          <div className="absolute bottom-6 -left-6 bg-[var(--main-dark)] border border-[var(--light-grid)] z-30 min-w-[300px] flex flex-col shadow-2xl">
-            <div className="flex items-center gap-3 px-6 pt-4 pb-5">
-              <h3 className="text-[20px] font-medium text-[var(--cream)] leading-none underline decoration-[1.5px] underline-offset-[4px] decoration-[var(--light-grid)]">
-                {images[activeDot].title}
-              </h3>
-              <span className="text-[18px] font-medium text-[var(--cream)] transform translate-y-[1px]">↘</span>
-            </div>
-            <div className="w-full border-b border-[var(--light-grid)]" />
-            <div className="px-6 pt-5 pb-5">
-              <p className="text-[18px] font-normal text-[var(--cream)] opacity-100 leading-snug">
-                {images[activeDot].desc}
-              </p>
-            </div>
-          </div>
-        </Link>
-      </div>
-
       {/* NAVIGATION CONTROLS */}
-      <div className="w-full mt-9 flex items-center min-h-[40px] z-40">
+      <div className="w-full mb-4 flex items-center min-h-[40px] z-40">
         <div className="flex-1 flex justify-center">
           <button onClick={() => moveToIndex(currentIndexRef.current - 1)} className="text-[var(--cream)] text-2xl cursor-pointer">←</button>
         </div>
@@ -159,6 +106,58 @@ export default function Gallery() {
           <button onClick={() => moveToIndex(currentIndexRef.current + 1)} className="text-[var(--cream)] text-2xl cursor-pointer">→</button>
         </div>
       </div>
+
+      <div className="relative flex-grow overflow-visible">
+        <Link 
+          href={`/work/${images[activeDot].slug}`}
+          onMouseEnter={() => setIsHovering(true)}
+          onMouseLeave={() => setIsHovering(false)}
+          className="contents cursor-none"
+        >
+          {/* MAIN IMAGE BOX */}
+          <div className="relative w-full h-full min-h-[350px] md:min-h-[400px] border-[1.5px] border-[var(--light-grid)] rounded-none overflow-hidden z-10 transition-all duration-300">
+            <div 
+              ref={scrollRef} 
+              onScroll={handleScroll} 
+              className="w-full h-full overflow-x-auto overflow-y-hidden snap-x snap-mandatory no-scrollbar flex"
+            >
+              {infiniteItems.map((item, i) => (
+                <div key={`${item.id}-${i}`} className="min-w-full h-full snap-center relative">
+                  <WorkHero 
+                    src={item.src} 
+                    alt={item.title}
+                    className="object-cover"
+                    priority={i === 1}
+                  />
+                </div>
+              ))}
+            </div>
+            
+            <div 
+              className="absolute inset-0 pointer-events-none z-20" 
+              style={{ background: "linear-gradient(to bottom, transparent 0%, var(--main-dark) 95%)" }} 
+            />
+          </div>
+
+          {/* BLUEPRINT TITLE BLOCK - Dropped further downwards to -bottom-20 */}
+          <div className="absolute -bottom-20 -left-6 bg-[var(--main-dark)] border border-[var(--light-grid)] z-30 min-w-[300px] flex flex-col shadow-2xl">
+            <div className="flex items-center gap-3 px-6 pt-4 pb-5">
+              <h3 className="text-[20px] font-medium text-[var(--cream)] leading-none underline decoration-[1.5px] underline-offset-[4px] decoration-[var(--light-grid)]">
+                {images[activeDot].title}
+              </h3>
+              <span className="text-[18px] font-medium text-[var(--cream)] transform translate-y-[1px]">↘</span>
+            </div>
+            <div className="w-full border-b border-[var(--light-grid)]" />
+            <div className="px-6 pt-5 pb-5">
+              <p className="text-[18px] font-normal text-[var(--cream)] opacity-100 leading-snug">
+                {images[activeDot].desc}
+              </p>
+            </div>
+          </div>
+        </Link>
+      </div>
     </div>
   );
 }
+
+// CAA 17APR26 / 2125H.

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { League_Gothic } from "next/font/google";
+// @ts-ignore
 import "./globals.css";
 
 const leagueGothic = League_Gothic({
@@ -8,8 +9,8 @@ const leagueGothic = League_Gothic({
 });
 
 export const metadata: Metadata = {
-  title: "JEOL | Portfolio",
-  description: "Architectural Portfolio",
+  title: "Jeol. | Joel. Design.",
+  description: "Experience Designer Portfolio.",
 };
 
 // Add { children }: { children: React.ReactNode } here
