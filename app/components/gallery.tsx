@@ -10,6 +10,7 @@ const images = Object.entries(workData).map(([slug, data]) => ({
   title: data.title,
   desc: data.summary,
   id: slug,
+  status: (data as any).status || "live",
 }));
 
 const infiniteItems = [images[images.length - 1], ...images, images[0]];
@@ -19,11 +20,14 @@ export default function Gallery() {
   const [mousePos, setMousePos] = useState({ x: -100, y: -100 });
   const [isHovering, setIsHovering] = useState(false);
   const [hasMoved, setHasMoved] = useState(false);
-  
+
   const currentIndexRef = useRef(1);
   const scrollRef = useRef<HTMLDivElement>(null);
   const lastInteractionTime = useRef(Date.now());
   const THROTTLE_MS = 400;
+
+  const activeItem = images[activeDot];
+  const isComingSoon = activeItem.status === "coming-soon";
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -48,7 +52,8 @@ export default function Gallery() {
     const width = el.offsetWidth;
     const scrollPos = el.scrollLeft;
     const rawIndex = Math.round(scrollPos / width);
-    const dotIndex = (((rawIndex - 1) % images.length) + images.length) % images.length;
+    const dotIndex =
+      (((rawIndex - 1) % images.length) + images.length) % images.length;
     setActiveDot(dotIndex);
 
     clearTimeout((window as any).scrollTimeout);
@@ -76,81 +81,113 @@ export default function Gallery() {
 
   return (
     <div className="w-full h-full flex flex-col font-ibm overflow-visible -mt-12 md:-mt-16">
-      
       {/* CUSTOM CURSOR */}
-      <div 
+      <div
         className="fixed top-0 left-0 w-10 h-10 border-[1.5px] border-[var(--cream)] rounded-full pointer-events-none z-[9999] flex items-center justify-center transition-[opacity,transform] duration-[200ms] ease-out"
-        style={{ 
+        style={{
           left: `${mousePos.x}px`,
           top: `${mousePos.y}px`,
           transform: `translate(-50%, -50%) scale(${isHovering ? 1 : 0})`,
-          opacity: isHovering && hasMoved ? 1 : 0
+          opacity: isHovering && hasMoved ? 1 : 0,
         }}
       />
 
       {/* NAVIGATION CONTROLS */}
       <div className="w-full mb-4 flex items-center min-h-[40px] z-40">
         <div className="flex-1 flex justify-center">
-          <button onClick={() => moveToIndex(currentIndexRef.current - 1)} className="text-[var(--cream)] text-2xl cursor-pointer">←</button>
+          <button
+            onClick={() => moveToIndex(currentIndexRef.current - 1)}
+            className="text-[var(--cream)] text-2xl cursor-pointer"
+          >
+            ←
+          </button>
         </div>
         <div className="flex-none flex gap-4">
           {images.map((_, i) => (
-            <button 
-              key={i} 
-              onClick={() => moveToIndex(i + 1)} 
-              className={`w-1.5 h-1.5 rounded-full transition-all duration-300 cursor-pointer ${activeDot === i ? "bg-[var(--highlighter-pink)] scale-125" : "bg-[var(--grid-grey)]"}`} 
+            <button
+              key={i}
+              onClick={() => moveToIndex(i + 1)}
+              className={`w-1.5 h-1.5 rounded-full transition-all duration-300 cursor-pointer ${activeDot === i ? "bg-[var(--highlighter-pink)] scale-125" : "bg-[var(--grid-grey)]"}`}
             />
           ))}
         </div>
         <div className="flex-1 flex justify-center">
-          <button onClick={() => moveToIndex(currentIndexRef.current + 1)} className="text-[var(--cream)] text-2xl cursor-pointer">→</button>
+          <button
+            onClick={() => moveToIndex(currentIndexRef.current + 1)}
+            className="text-[var(--cream)] text-2xl cursor-pointer"
+          >
+            →
+          </button>
         </div>
       </div>
 
       <div className="relative flex-grow overflow-visible">
-        <Link 
-          href={`/work/${images[activeDot].slug}`}
-          onMouseEnter={() => setIsHovering(true)}
+        <Link
+          href={isComingSoon ? "#" : `/work/${activeItem.slug}`}
+          onClick={(e) => isComingSoon && e.preventDefault()}
+          onMouseEnter={() => !isComingSoon && setIsHovering(true)}
           onMouseLeave={() => setIsHovering(false)}
-          className="contents cursor-none"
+          /* Removed pointer-events-none to allow scrolling */
+          className={`contents ${!isComingSoon ? "cursor-none" : ""}`}
         >
           {/* MAIN IMAGE BOX */}
-          <div className="relative w-full h-full min-h-[350px] md:min-h-[400px] border-[1.5px] border-[var(--light-grid)] rounded-none overflow-hidden z-10 transition-all duration-300">
-            <div 
-              ref={scrollRef} 
-              onScroll={handleScroll} 
-              className="w-full h-full overflow-x-auto overflow-y-hidden snap-x snap-mandatory no-scrollbar flex"
+          <div
+            className={`relative w-full h-full min-h-[350px] md:min-h-[400px] border-[1.5px] border-[var(--light-grid)] rounded-none overflow-hidden z-10 transition-all duration-500 ${isComingSoon ? "grayscale opacity-60" : "grayscale-0 opacity-100"}`}
+          >
+            {isComingSoon && (
+              <div className="absolute inset-0 z-40 flex items-center justify-center bg-[var(--deep-black)]/20 backdrop-blur-[1px] pointer-events-none">
+                <p className="bg-[var(--main-dark)] border border-[var(--grid-grey)] px-4 py-2 text-[var(--cream)] text-xs md:text-sm tracking-widest font-medium shadow-xl">
+                  Coming soon, but ask me about it!
+                </p>
+              </div>
+            )}
+
+            <div
+              ref={scrollRef}
+              onScroll={handleScroll}
+              /* Explicitly enable pointer events so wheel scrolling is captured */
+              className="w-full h-full overflow-x-auto overflow-y-hidden snap-x snap-mandatory no-scrollbar flex pointer-events-auto"
             >
-              {infiniteItems.map((item, i) => (
-                <div key={`${item.id}-${i}`} className="min-w-full h-full snap-center relative">
-                  <WorkHero 
-                    src={item.src} 
+              {infiniteItems.map((item: any, i: number) => (
+                <div
+                  key={`${item.id}-${i}`}
+                  className="min-w-full h-full snap-center relative"
+                >
+                  <WorkHero
+                    src={item.src}
                     alt={item.title}
-                    className="object-cover"
+                    className="object-cover w-full h-full"
                     priority={i === 1}
                   />
                 </div>
               ))}
             </div>
-            
-            <div 
-              className="absolute inset-0 pointer-events-none z-20" 
-              style={{ background: "linear-gradient(to bottom, transparent 0%, var(--main-dark) 95%)" }} 
+
+            <div
+              className="absolute inset-0 pointer-events-none z-20"
+              style={{
+                background:
+                  "linear-gradient(to bottom, transparent 0%, var(--main-dark) 85%)",
+              }}
             />
           </div>
 
-          {/* BLUEPRINT TITLE BLOCK - Dropped further downwards to -bottom-20 */}
-          <div className="absolute -bottom-20 -left-6 bg-[var(--main-dark)] border border-[var(--light-grid)] z-30 min-w-[300px] flex flex-col shadow-2xl">
+          {/* BLUEPRINT TITLE BLOCK */}
+          <div className="absolute top-full -mt-10 -left-6 bg-[var(--main-dark)] border border-[var(--light-grid)] z-30 min-w-[300px] md:min-w-[380px] flex flex-col shadow-2xl pointer-events-auto">
             <div className="flex items-center gap-3 px-6 pt-4 pb-5">
               <h3 className="text-[20px] font-medium text-[var(--cream)] leading-none underline decoration-[1.5px] underline-offset-[4px] decoration-[var(--light-grid)]">
-                {images[activeDot].title}
+                {activeItem.title}
               </h3>
-              <span className="text-[18px] font-medium text-[var(--cream)] transform translate-y-[1px]">↘</span>
+              <span className="text-[18px] font-medium text-[var(--cream)] transform translate-y-[1px]">
+                ↘
+              </span>
             </div>
+
             <div className="w-full border-b border-[var(--light-grid)]" />
+
             <div className="px-6 pt-5 pb-5">
               <p className="text-[18px] font-normal text-[var(--cream)] opacity-100 leading-snug">
-                {images[activeDot].desc}
+                {activeItem.desc}
               </p>
             </div>
           </div>
@@ -160,4 +197,4 @@ export default function Gallery() {
   );
 }
 
-// CAA 17APR26 / 2125H.
+// CAA 22APR26 / 0017H.

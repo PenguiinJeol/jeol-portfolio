@@ -11,6 +11,10 @@ const leagueGothic = League_Gothic({
 export const metadata: Metadata = {
   title: "Jeol. | Joel. Design.",
   description: "Experience Designer Portfolio.",
+  icons: {
+    icon: "icons/jeol-logo.svg",
+    apple: "icons/jeol-logo.svg", // For iPhone home screens.
+  },
 };
 
 // Add { children }: { children: React.ReactNode } here

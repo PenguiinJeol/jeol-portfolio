@@ -1,8 +1,6 @@
-
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=STIX+Two+Text:ital,wght@1,500&display=swap');
 @import "tailwindcss";
-
-
 
 :root {
   --main-dark: #101118;
@@ -14,13 +12,14 @@
   --highlighter-blue: #00ffd5;
   --grid-columns: 20;
   --font-ibm-plex: 'IBM Plex Sans', sans-serif;
+  --font-stix-two: 'STIX Two Text', serif;
 }
 
 @layer base {
   html {
-    font-family: var(--font-league-gothic), sans-serif;
+    font-family: var(--font-ibm-plex), sans-serif;
     letter-spacing: 0.05em;
-    overflow-y: overlay; /* Note: This is deprecated in some browsers but still widely supported */
+    overflow-y: overlay;
   }
 }
 
@@ -41,19 +40,11 @@ body {
 }
 
 .grid-pattern {
-  /* Using cqw for the width-based square */
   --square-size: calc(100cqw / var(--grid-columns));
-
-  /* Using 1.01px instead of 1px helps 'snap' the line to the physical pixel 
-     grid on high-res monitors, fixing the 'weird thickness' on the right. */
   background-image:
     linear-gradient(to right, var(--grid-grey) 1.01px, transparent 1.01px),
     linear-gradient(to bottom, var(--grid-grey) 1.01px, transparent 1.01px);
-  
   background-size: var(--square-size) var(--square-size);
-  
-  /* Resetting to 0 0 for technical accuracy. 
-     We will fix the 'two halves' in the page.tsx layout instead. */
   background-position: 0 0;
   background-repeat: repeat;
 }
@@ -71,21 +62,22 @@ body {
   font-family: var(--font-ibm-plex);
 }
 
+.font-stix {
+  font-family: var(--font-stix-two);
+}
+
 ::-webkit-scrollbar {
-  width: 10px; /* Slightly wider to make the border visible */
+  width: 10px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--deep-black);
-  /* This creates a vertical 'grid line' that stays fixed as you scroll */
+  background: var(--main-dark);
   border-left: 1px solid var(--grid-grey);
 }
 
 ::-webkit-scrollbar-thumb {
   background: var(--grid-grey);
-  /* Rounded as requested */
   border-radius: 10px;
-  /* Adds a little 'inset' so the thumb doesn't touch the edges */
   border: 2px solid transparent;
   background-clip: content-box;
 }
@@ -95,4 +87,4 @@ body {
   background-clip: content-box;
 }
 
-/* CAA 12APR26 / 1008H. */
+/* CAA 21APR26 / 1709H. */

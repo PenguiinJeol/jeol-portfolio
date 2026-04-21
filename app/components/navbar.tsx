@@ -7,21 +7,22 @@ import { usePathname } from "next/navigation";
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
-  const navItems = ["HOME", "WORK", "ABOUT"];
+  const navItems = ["HOME", "WORK" /*, "ABOUT" */];
 
   return (
     <>
       {/* 0. THE FADE GRADIENT (Matches Navbar Height) */}
       <AnimatePresence>
         {!isOpen && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed top-0 left-0 w-full z-[80] pointer-events-none"
             style={{
-              height: '10rem', // Matches the h-24 height of your navbar
-              background: 'linear-gradient(to bottom, var(--main-dark) 0%, transparent 100%)'
+              height: "10rem", // Matches the h-24 height of your navbar
+              background:
+                "linear-gradient(to bottom, var(--main-dark) 0%, transparent 100%)",
             }}
           />
         )}
@@ -68,7 +69,7 @@ export default function Navbar() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-[90] bg-[#0a0a0a]/80 backdrop-blur-[4px] flex flex-col justify-center items-start 
-                       px-12 md:px-[140px]" 
+                       px-12 md:px-[140px]"
           >
             <nav className="flex flex-col gap-6 md:gap-8">
               {navItems.map((item) => {
@@ -83,7 +84,11 @@ export default function Navbar() {
                         initial={{ opacity: 0, x: -10 }}
                         animate={{ opacity: 1, x: 0 }}
                       >
-                        <svg className="w-6 h-6 md:w-10 md:h-10" viewBox="0 0 40 40" fill="none">
+                        <svg
+                          className="w-6 h-6 md:w-10 md:h-10"
+                          viewBox="0 0 40 40"
+                          fill="none"
+                        >
                           <motion.path
                             d="M13.5 10.5 L25.2 18.8 Q26 20 25.2 21.2 L13.5 29.5 Q12.5 30 12.5 28.5 L12.5 11.5 Q12.5 10 13.5 10.5 Z"
                             stroke="var(--highlighter-pink)"
@@ -112,3 +117,5 @@ export default function Navbar() {
     </>
   );
 }
+
+// CAA 22APR26 / 0021H.

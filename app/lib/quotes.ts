@@ -9,6 +9,8 @@ export const quotes = [
     "If you love it, you'll teach yourself. If you don't love it, others teach you.",
     "Greatness is boring.",
     "The best time to plant a tree was 10 years ago. The second best time is now.",
-    "The 24-hour clock system is objectively better than the 12-hour clock system.",
+    "You don't learn to swim by reading about water.",
+    "If you take care of the minutes, the hours take care of themselves.",
+    "Can't win a Game 7 without losing 3 games first.",
 
 ];
