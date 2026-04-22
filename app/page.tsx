@@ -17,7 +17,6 @@ export default function Home() {
   const [randomHobby, setRandomHobby] = useState("");
 
   useEffect(() => {
-    // Pick a random hobby on mount
     const randomIndex = Math.floor(Math.random() * hobbyPrompts.length);
     setRandomHobby(hobbyPrompts[randomIndex]);
 
@@ -55,6 +54,7 @@ export default function Home() {
         <Navbar />
         <div className="relative z-10 mx-6 md:mx-14 lg:mx-[100px] my-10 md:my-14 lg:my-[100px] h-auto lg:h-[calc(100vh-200px)] flex items-stretch">
           <div className="grid grid-cols-1 lg:grid-cols-2 w-full h-full gap-6 lg:gap-4">
+            {/* Left Column: Title & Intro */}
             <div className="relative flex flex-col justify-center order-1 pl-0 lg:pl-12 pt-[20vh] lg:pt-0 pb-4 lg:pb-[100px]">
               <div className="z-20 text-center lg:text-left">
                 <h1 className="font-[family-name:var(--font-league-gothic)] text-5xl lg:text-6xl font-bold tracking-[0.05em] text-[var(--cream)] flex items-baseline justify-center lg:justify-start">
@@ -98,14 +98,11 @@ export default function Home() {
                   ))}
                 </p>
               </div>
-              <div className="mt-8 lg:mt-12 lg:absolute lg:bottom-12 lg:left-0 lg:right-0 flex justify-center pointer-events-none">
-                <div className="w-[120px] lg:w-[150px] aspect-square border border-dashed border-[var(--grid-grey)] flex items-center justify-center opacity-40">
-                  <span className="text-[10px] font-mono tracking-tighter text-[var(--cream)]">
-                    GIF_ASSET_RESERVED
-                  </span>
-                </div>
-              </div>
+
+              {/* GIF_ASSET_RESERVED placeholder removed */}
             </div>
+
+            {/* Right Column: Gallery */}
             <div className="w-full flex flex-col order-2 pr-0 lg:pr-[100px] pt-0 lg:pt-[100px] pb-6 lg:pb-20 h-[380px] lg:h-full overflow-visible justify-between">
               <Gallery />
             </div>
@@ -213,4 +210,4 @@ export default function Home() {
   );
 }
 
-// CAA 22APR26 / 1611H.
+// CAA 22APR26 / 2314H.

@@ -80,11 +80,10 @@ export default function Gallery() {
   }, []);
 
   return (
-    <div className="w-full h-full flex flex-col font-ibm overflow-visible -mt-12 md:-mt-16">
-      {/* CUSTOM CURSOR */}
+    <div className="w-full h-full flex flex-col font-ibm overflow-visible -mt-8 md:-mt-16">
+      {/* CUSTOM CURSOR - Hidden on touch devices */}
       <div
-        /* Updated duration from 200ms to 150ms for snappier feel */
-        className="fixed top-0 left-0 w-10 h-10 border-[1.5px] border-[var(--cream)] rounded-full pointer-events-none z-[9999] flex items-center justify-center transition-[opacity,transform] duration-[150ms] ease-out overflow-hidden"
+        className="fixed top-0 left-0 w-10 h-10 border-[1.5px] border-[var(--cream)] rounded-full pointer-events-none z-[9999] hidden lg:flex items-center justify-center transition-[opacity,transform] duration-[150ms] ease-out overflow-hidden"
         style={{
           left: `${mousePos.x}px`,
           top: `${mousePos.y}px`,
@@ -100,17 +99,17 @@ export default function Gallery() {
         )}
       </div>
 
-      {/* NAVIGATION CONTROLS */}
+      {/* NAVIGATION CONTROLS - Scaled arrows for mobile */}
       <div className="w-full mb-4 flex items-center min-h-[40px] z-40">
         <div className="flex-1 flex justify-center">
           <button
             onClick={() => moveToIndex(currentIndexRef.current - 1)}
-            className="text-[var(--cream)] text-2xl cursor-pointer"
+            className="text-[var(--cream)] text-xl md:text-2xl p-2 cursor-pointer active:scale-90 transition-transform"
           >
             ←
           </button>
         </div>
-        <div className="flex-none flex gap-4">
+        <div className="flex-none flex gap-3 md:gap-4">
           {images.map((_, i) => (
             <button
               key={i}
@@ -122,7 +121,7 @@ export default function Gallery() {
         <div className="flex-1 flex justify-center">
           <button
             onClick={() => moveToIndex(currentIndexRef.current + 1)}
-            className="text-[var(--cream)] text-2xl cursor-pointer"
+            className="text-[var(--cream)] text-xl md:text-2xl p-2 cursor-pointer active:scale-90 transition-transform"
           >
             →
           </button>
@@ -139,11 +138,11 @@ export default function Gallery() {
         >
           {/* MAIN IMAGE BOX */}
           <div
-            className={`relative w-full h-full min-h-[350px] md:min-h-[400px] border-[1.5px] border-[var(--light-grid)] rounded-none overflow-hidden z-10 transition-all duration-500 ${isComingSoon ? "grayscale opacity-60" : "grayscale-0 opacity-100"}`}
+            className={`relative w-full h-full min-h-[300px] md:min-h-[400px] border-[1.5px] border-[var(--light-grid)] rounded-none overflow-hidden z-10 transition-all duration-500 ${isComingSoon ? "grayscale opacity-60" : "grayscale-0 opacity-100"}`}
           >
             {isComingSoon && (
-              <div className="absolute inset-0 z-40 flex items-center justify-center bg-[var(--deep-black)]/20 backdrop-blur-[1px] pointer-events-none">
-                <p className="bg-[var(--main-dark)] border border-[var(--grid-grey)] px-4 py-2 text-[var(--cream)] text-xs md:text-sm tracking-widest font-medium shadow-xl">
+              <div className="absolute inset-0 z-40 flex items-center justify-center bg-[var(--deep-black)]/20 backdrop-blur-[1px] pointer-events-none p-4 text-center">
+                <p className="bg-[var(--main-dark)] border border-[var(--grid-grey)] px-4 py-2 text-[var(--cream)] text-[10px] md:text-sm tracking-widest font-medium shadow-xl">
                   Coming soon, but ask me about it!
                 </p>
               </div>
@@ -178,21 +177,21 @@ export default function Gallery() {
             />
           </div>
 
-          {/* BLUEPRINT TITLE BLOCK */}
-          <div className="absolute top-full -mt-10 -left-6 bg-[var(--main-dark)] border border-[var(--light-grid)] z-30 min-w-[300px] md:min-w-[380px] flex flex-col shadow-2xl pointer-events-auto">
-            <div className="flex items-center gap-3 px-6 pt-4 pb-5">
-              <h3 className="text-[20px] font-medium text-[var(--cream)] leading-none underline decoration-[1.5px] underline-offset-[4px] decoration-[var(--light-grid)]">
+          {/* BLUEPRINT TITLE BLOCK - Responsive width and positioning */}
+          <div className="absolute top-full -mt-8 md:-mt-10 left-0 md:-left-6 bg-[var(--main-dark)] border border-[var(--light-grid)] z-30 w-[calc(100%-1rem)] mx-2 md:mx-0 md:min-w-[380px] flex flex-col shadow-2xl pointer-events-auto">
+            <div className="flex items-center gap-3 px-4 md:px-6 pt-4 pb-4 md:pb-5">
+              <h3 className="text-[18px] md:text-[20px] font-medium text-[var(--cream)] leading-none underline decoration-[1.5px] underline-offset-[4px] decoration-[var(--light-grid)]">
                 {activeItem.title}
               </h3>
-              <span className="text-[18px] font-medium text-[var(--cream)] transform translate-y-[1px]">
+              <span className="text-[16px] md:text-[18px] font-medium text-[var(--cream)] transform translate-y-[1px]">
                 ↘
               </span>
             </div>
 
             <div className="w-full border-b border-[var(--light-grid)]" />
 
-            <div className="px-6 pt-5 pb-5">
-              <p className="text-[18px] font-normal text-[var(--cream)] opacity-100 leading-snug">
+            <div className="px-4 md:px-6 pt-4 md:pt-5 pb-5">
+              <p className="text-[16px] md:text-[18px] font-normal text-[var(--cream)] opacity-100 leading-snug">
                 {activeItem.desc}
               </p>
             </div>
@@ -202,5 +201,3 @@ export default function Gallery() {
     </div>
   );
 }
-
-// CAA 22APR26 / 1625H.
