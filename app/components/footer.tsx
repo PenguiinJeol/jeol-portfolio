@@ -45,7 +45,7 @@ export default function Footer() {
               </div>
               <div className="flex items-center gap-3">
                 <a
-                  href="https://instagram.com"
+                  href="https://www.instagram.com/jeolxp/"
                   target="_blank"
                   className="opacity-60 hover:opacity-100 transition-opacity"
                 >
@@ -57,7 +57,7 @@ export default function Footer() {
                   />
                 </a>
                 <a
-                  href="https://linkedin.com"
+                  href="https://www.linkedin.com/in/joeljeol/"
                   target="_blank"
                   className="opacity-60 hover:opacity-100 transition-opacity"
                 >
