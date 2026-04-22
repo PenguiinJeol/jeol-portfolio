@@ -12,5 +12,6 @@ export const quotes = [
     "You don't learn to swim by reading about water.",
     "If you take care of the minutes, the hours take care of themselves.",
     "Can't win a Game 7 without losing 3 games first.",
+    "Great minds think alike, but fools seldom differ.",
 
 ];

@@ -83,14 +83,22 @@ export default function Gallery() {
     <div className="w-full h-full flex flex-col font-ibm overflow-visible -mt-12 md:-mt-16">
       {/* CUSTOM CURSOR */}
       <div
-        className="fixed top-0 left-0 w-10 h-10 border-[1.5px] border-[var(--cream)] rounded-full pointer-events-none z-[9999] flex items-center justify-center transition-[opacity,transform] duration-[200ms] ease-out"
+        /* Updated duration from 200ms to 150ms for snappier feel */
+        className="fixed top-0 left-0 w-10 h-10 border-[1.5px] border-[var(--cream)] rounded-full pointer-events-none z-[9999] flex items-center justify-center transition-[opacity,transform] duration-[150ms] ease-out overflow-hidden"
         style={{
           left: `${mousePos.x}px`,
           top: `${mousePos.y}px`,
           transform: `translate(-50%, -50%) scale(${isHovering ? 1 : 0})`,
           opacity: isHovering && hasMoved ? 1 : 0,
         }}
-      />
+      >
+        {isComingSoon && (
+          <div className="relative w-full h-full">
+            <span className="absolute top-1/2 left-1/2 w-full h-[1.5px] bg-[var(--cream)] -translate-x-1/2 -translate-y-1/2 rotate-45" />
+            <span className="absolute top-1/2 left-1/2 w-full h-[1.5px] bg-[var(--cream)] -translate-x-1/2 -translate-y-1/2 -rotate-45" />
+          </div>
+        )}
+      </div>
 
       {/* NAVIGATION CONTROLS */}
       <div className="w-full mb-4 flex items-center min-h-[40px] z-40">
@@ -125,10 +133,9 @@ export default function Gallery() {
         <Link
           href={isComingSoon ? "#" : `/work/${activeItem.slug}`}
           onClick={(e) => isComingSoon && e.preventDefault()}
-          onMouseEnter={() => !isComingSoon && setIsHovering(true)}
+          onMouseEnter={() => setIsHovering(true)}
           onMouseLeave={() => setIsHovering(false)}
-          /* Removed pointer-events-none to allow scrolling */
-          className={`contents ${!isComingSoon ? "cursor-none" : ""}`}
+          className="contents cursor-none"
         >
           {/* MAIN IMAGE BOX */}
           <div
@@ -145,7 +152,6 @@ export default function Gallery() {
             <div
               ref={scrollRef}
               onScroll={handleScroll}
-              /* Explicitly enable pointer events so wheel scrolling is captured */
               className="w-full h-full overflow-x-auto overflow-y-hidden snap-x snap-mandatory no-scrollbar flex pointer-events-auto"
             >
               {infiniteItems.map((item: any, i: number) => (
@@ -197,4 +203,4 @@ export default function Gallery() {
   );
 }
 
-// CAA 22APR26 / 0017H.
+// CAA 22APR26 / 1625H.

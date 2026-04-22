@@ -5,6 +5,7 @@ import Navbar from "./components/navbar";
 import Gallery from "./components/gallery";
 import Footer from "./components/footer";
 import Link from "next/link";
+import { hobbyPrompts } from "./lib/cta-hobby-prompts";
 
 export default function Home() {
   // Illumination Logic
@@ -13,13 +14,16 @@ export default function Home() {
 
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [activeColor, setActiveColor] = useState<string>("");
+  const [randomHobby, setRandomHobby] = useState("");
 
   useEffect(() => {
-    let lastIndex = -1;
+    // Pick a random hobby on mount
+    const randomIndex = Math.floor(Math.random() * hobbyPrompts.length);
+    setRandomHobby(hobbyPrompts[randomIndex]);
 
+    let lastIndex = -1;
     const cycle = () => {
       let newIndex;
-      // Ensure the same word isn't picked twice in a row (inactive for at least 1 cycle)
       do {
         newIndex = Math.floor(Math.random() * words.length);
       } while (newIndex === lastIndex);
@@ -30,14 +34,13 @@ export default function Home() {
       setActiveColor(newColor);
       lastIndex = newIndex;
 
-      // Active for 900ms, then clear to allow 100ms for simultaneous transition
       setTimeout(() => {
         setActiveIndex(null);
       }, 900);
     };
 
     const interval = setInterval(cycle, 1000);
-    cycle(); // Initial trigger
+    cycle();
 
     return () => clearInterval(interval);
   }, []);
@@ -78,7 +81,6 @@ export default function Home() {
                   </span>
                 </h1>
 
-                {/* DYNAMIC ILLUMINATION SUBTITLE */}
                 <p className="font-[family-name:var(--font-league-gothic)] text-3xl lg:text-4xl tracking-[0.05em] text-[var(--cream)] opacity-80 mt-6 lg:mt-8">
                   I{" "}
                   {words.map((word, i) => (
@@ -91,7 +93,6 @@ export default function Home() {
                       >
                         {word}
                       </span>
-                      {/* Grammar: Design, Gym, and Game. */}
                       {i === 0 ? ", " : i === 1 ? ", and " : "."}
                     </span>
                   ))}
@@ -181,8 +182,10 @@ export default function Home() {
                   </p>
                   <p className="text-[var(--cream)] text-sm md:text-base opacity-80 leading-relaxed max-w-[650px] mt-6 italic">
                     Feel free to get in contact with me if you wish to discuss
-                    work, or swap theories about the minute details of
-                    yesterday's game winner in basketball!
+                    work, or{" "}
+                    <span className="animate-in fade-in duration-1000">
+                      {randomHobby}
+                    </span>
                   </p>
                 </div>
               </div>
@@ -210,4 +213,4 @@ export default function Home() {
   );
 }
 
-// CAA 21APR26 / 2358H.
+// CAA 22APR26 / 1611H.

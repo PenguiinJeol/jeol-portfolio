@@ -7,7 +7,9 @@ import { usePathname } from "next/navigation";
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
-  const navItems = ["HOME", "WORK" /*, "ABOUT" */];
+
+  // Repurposed WORK to LIJSSIE
+  const navItems = ["HOME", "LIJSSIE" /*, "ABOUT" */];
 
   return (
     <>
@@ -20,7 +22,7 @@ export default function Navbar() {
             exit={{ opacity: 0 }}
             className="fixed top-0 left-0 w-full z-[80] pointer-events-none"
             style={{
-              height: "10rem", // Matches the h-24 height of your navbar
+              height: "10rem",
               background:
                 "linear-gradient(to bottom, var(--main-dark) 0%, transparent 100%)",
             }}
@@ -31,6 +33,7 @@ export default function Navbar() {
       {/* 1. THE BUTTON */}
       <button
         onClick={() => setIsOpen(!isOpen)}
+        /* Kept cursor-pointer here so the toggle button feels interactive */
         className="fixed z-[100] -translate-x-1/2 -translate-y-1/2 flex items-center justify-center cursor-pointer transition-all duration-300
                    left-10 top-10 w-[40px] h-[40px] 
                    md:left-[100px] md:top-[50px] md:w-[60px] md:h-[60px]"
@@ -61,20 +64,27 @@ export default function Navbar() {
         </svg>
       </button>
 
-      {/* 2. THE OVERLAY (Existing code remains the same) */}
+      {/* 2. THE OVERLAY */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            onClick={() => setIsOpen(false)}
+            /* Changed to cursor-default so the "dismiss" area doesn't look like a button */
             className="fixed inset-0 z-[90] bg-[#0a0a0a]/80 backdrop-blur-[4px] flex flex-col justify-center items-start 
-                       px-12 md:px-[140px]"
+                       px-12 md:px-[140px] cursor-default"
           >
-            <nav className="flex flex-col gap-6 md:gap-8">
+            <nav
+              className="flex flex-col gap-6 md:gap-8"
+              onClick={(e) => e.stopPropagation()}
+            >
               {navItems.map((item) => {
-                const path = item === "HOME" ? "/" : `/${item.toLowerCase()}`;
+                const path =
+                  item === "HOME" ? "/" : `/work/${item.toLowerCase()}`;
                 const isActive = pathname === path;
+
                 return (
                   <div key={item} className="relative flex items-center group">
                     {isActive && (
@@ -102,6 +112,7 @@ export default function Navbar() {
                     <Link
                       href={path}
                       onClick={() => setIsOpen(false)}
+                      /* Link automatically provides cursor-pointer */
                       className={`font-[family-name:var(--font-league-gothic)] text-4xl md:text-6xl font-bold tracking-[0.05em] transition-colors relative ${isActive ? "text-[var(--highlighter-pink)]" : "text-[var(--cream)]"}`}
                     >
                       {item}
@@ -118,4 +129,4 @@ export default function Navbar() {
   );
 }
 
-// CAA 22APR26 / 0021H.
+// CAA 22APR26 / 1642H.
